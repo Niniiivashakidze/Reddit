@@ -75,14 +75,21 @@ namespace Reddit.Controllers
         // POST: api/Posts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Post>> PostPost(CreatePostDto createPostDto)
+        public async Task<ActionResult<Post>> CreatePost(CreatePostDto postDto)
         {
-            var post = _mapper.toPost(createPostDto);
+            var post = new Post
+            {
+                Title = postDto.Title,
+                Content = postDto.Content,
+                CreateAt = DateTime.UtcNow,
+                AuthorId = postDto.AuthorId,
+                CommunityId = postDto.CommunityId
+            };
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPost", new { id = post.Id }, post);
+            return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
         }
 
         // DELETE: api/Posts/5
